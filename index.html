@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>הדגמה – מערכת התאמות</title>
+<style>
+:root{color-scheme:light;--bg:#f4f5f7;--ink:#1c2430;--mut:#6b7280;--pri:#1f3a5f;--wa:#1faa59;--line:#e0e3e8;--okbg:#e3f6ea;--ok:#157a3e;--wbg:#fef3c7;--w:#92400e}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:16px;line-height:1.4;padding-top:env(safe-area-inset-top,0px);padding-bottom:calc(130px + env(safe-area-inset-bottom,0px))}
+.demo{background:var(--wbg);color:var(--w);font-size:13px;text-align:center;padding:6px 10px}
+.screen{display:none;padding:14px;max-width:560px;margin:0 auto}
+.screen.on{display:block}
+h1{font-size:20px;margin:2px 0 10px}h2{font-size:17px;margin:16px 0 4px}
+input[type=text],input[type=tel],input[type=number],input[type=search],select{width:100%;padding:12px;font-size:16px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);font-family:inherit}
+label{display:block;font-size:14px;color:var(--mut);margin:12px 0 4px}
+.card{background:#fff;border:1px solid var(--line);border-radius:10px;margin:10px 0;overflow:hidden}
+.pad{padding:12px}
+.ph{background:#d9dde3;color:#6b7280;display:flex;align-items:center;justify-content:center;font-size:14px}
+.card>.ph{height:100px}
+.row{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.price{font-weight:700;font-size:18px}
+.sub,.score{color:var(--mut);font-size:14px}
+.badges{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.b{font-size:13px;padding:3px 8px;border-radius:99px;background:var(--okbg);color:var(--ok)}
+.b.w{background:var(--wbg);color:var(--w)}
+.b.n{background:#eceff3;color:#374151}
+.btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+button{font-family:inherit;font-size:15px;border-radius:8px;padding:10px 8px;border:1px solid var(--pri);background:#fff;color:var(--pri);min-height:44px}
+button.g{background:var(--wa);border-color:var(--wa);color:#fff}
+button.o{border-color:var(--wa);color:var(--ok)}
+button.p{background:var(--pri);color:#fff}
+.bk{border:0;background:none;padding:4px 0;min-height:36px}
+nav{position:fixed;bottom:0;left:0;right:0;display:flex;background:#fff;border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);z-index:5}
+nav button{flex:1;border:0;border-radius:0;background:none;color:var(--mut);font-size:12px;padding:8px 2px;min-height:58px}
+nav button.on{color:var(--pri);font-weight:700;background:#eef2f7}
+nav span{display:block;font-size:20px}
+#bar{position:fixed;left:0;right:0;bottom:calc(58px + env(safe-area-inset-bottom,0px));background:#fff;border-top:1px solid var(--line);padding:8px 14px;z-index:6;display:none}
+.fab{position:fixed;left:16px;bottom:calc(78px + env(safe-area-inset-bottom,0px));width:56px;height:56px;border-radius:50%;background:var(--pri);color:#fff;font-size:30px;border:0;padding:0;z-index:4;box-shadow:0 3px 8px rgba(0,0,0,.25)}
+.modal{position:fixed;inset:0;background:var(--bg);overflow:auto;z-index:20;padding:14px 14px 40px;display:none}
+.modal.on{display:block}
+.mh{display:flex;justify-content:space-between;align-items:center}
+.mh button{border:0;font-size:22px;background:none}
+.note{background:var(--wbg);color:var(--w);font-size:13px;padding:8px 10px;border-radius:8px;margin:8px 0}
+.chk{display:flex;gap:16px;flex-wrap:wrap;margin:8px 0}
+.chk label{display:flex;align-items:center;gap:6px;margin:0;color:var(--ink);font-size:16px}
+.chk input,.sel input{width:20px;height:20px}
+.sel{display:flex;align-items:center;gap:8px;margin:0 0 8px;color:var(--ink)}
+#sheetbg{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;z-index:30;align-items:flex-end}
+#sheetbg.on{display:flex}
+#sheet{background:#fff;width:100%;max-width:560px;margin:0 auto;border-radius:16px 16px 0 0;padding:16px 16px calc(20px + env(safe-area-inset-bottom,0px))}
+.bubble{background:#dcf8c6;border-radius:10px;padding:10px;margin:10px 0;white-space:pre-line;font-size:15px}
+.thumbs{display:flex;gap:6px;margin-bottom:8px}
+.thumbs .ph{flex:1;height:50px;border-radius:6px;font-size:12px}
+.link{color:#0b66c3;word-break:break-all}
+#toast{position:fixed;bottom:150px;left:50%;transform:translateX(-50%);background:#222;color:#fff;padding:10px 16px;border-radius:99px;font-size:14px;display:none;z-index:40;max-width:90%;text-align:center}
+.cvhead{background:var(--pri);color:#fff;padding:16px;text-align:center}
+.cvhead small{display:block;opacity:.8;font-size:13px}
+.cvhead b{font-size:20px}
+.car{display:flex;overflow-x:auto;scroll-snap-type:x mandatory}
+.car .ph{flex:0 0 100%;height:200px;scroll-snap-align:start}
+.wabig{display:block;text-align:center;background:var(--wa);color:#fff;text-decoration:none;font-size:20px;font-weight:700;padding:14px;border-radius:12px;margin-top:12px}
+</style>
+</head>
+<body>
+<div class="demo">הדגמה · נתונים לדוגמה בלבד · השדות והכללים ייסגרו יחד</div>
+
+<section class="screen on" id="s1">
+  <h1>לקוחות</h1>
+  <input type="search" id="q" placeholder="הקלד שם, טלפון או שכונה" oninput="renderClients()">
+  <div id="clientList"></div>
+  <button class="fab" onclick="openClient()" aria-label="הוסף לקוח">+</button>
+</section>
+<section class="screen" id="cp"></section>
+<section class="screen" id="s2">
+  <h1>נכסים</h1>
+  <input type="search" id="pq" placeholder="חיפוש: שכונה, רחוב, חדרים, מחיר" oninput="renderProps()">
+  <div id="propList"></div>
+  <button class="fab" onclick="openProp()" aria-label="הוסף נכס">+</button>
+</section>
+<section class="screen" id="pp"></section>
+<section class="screen" id="s3" style="padding:0">
+  <div class="note" style="margin:0;border-radius:0;text-align:center">תצוגה מקדימה: כך הלקוח רואה את הקישור שנשלח אליו</div>
+  <div id="view"></div>
+</section>
+
+<div id="bar"></div>
+<nav>
+  <button class="on" onclick="go(0)"><span>👥</span>לקוחות</button>
+  <button onclick="go(1)"><span>🏠</span>נכסים</button>
+  <button onclick="go(2)"><span>📱</span>תצוגת לקוח</button>
+</nav>
+<div class="modal" id="modal"></div>
+<div id="sheetbg" onclick="if(event.target===this)closeSheet()"><div id="sheet"></div></div>
+<div id="toast"></div>
+
+<script>
+const $=s=>document.querySelector(s);
+const esc=t=>String(t??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmt=n=>Number(n).toLocaleString('he-IL')+' ₪';
+const ST={buy:500000,invest:300000},TY={buy:'קנייה',invest:'השקעה'};
+const AREAS=['דניה','אחוזה','הדר','קריית חיים','כרמל','נווה שאנן'];
+const STR=['חורב','הנשיא','מוריה','הנמל','ההסתדרות','הגפן','הים','יפו','הגליל','בן גוריון'];
+const hp=(id,area,addr,price,rooms,sqm,floor,park,mamad,elev,balc)=>({id,area,addr,price,rooms,sqm,floor,park,mamad,elev,balc});
+let props=[hp(1,'דניה','רחוב חורב 12',1950000,4,105,3,1,1,1,1),hp(2,'אחוזה','שדרות הנשיא 8',2150000,4,98,5,1,1,1,0),hp(3,'דניה','רחוב מוריה 30',2480000,4.5,120,7,1,1,1,1),hp(4,'הדר','רחוב הנמל 15',2700000,4,95,2,0,1,0,1),hp(5,'קריית חיים','רחוב ההסתדרות 40',1150000,3,78,2,1,1,0,1),hp(6,'קריית חיים','רחוב הגפן 5',1280000,3,82,4,1,0,1,1),hp(7,'קריית חיים','רחוב הים 21',980000,2.5,65,1,1,1,0,0)]
+.concat(Array.from({length:13},(_,i)=>{const r=[2.5,3,3.5,4,4.5,5][i%6];return hp(i+8,AREAS[i%6],'רחוב '+STR[i%10]+' '+(3+i*4),900000+(i*170000)%1800000,r,Math.round(r*22+i),1+i%8,i%4?1:0,i%3!==1?1:0,i%2,(i+1)%2)}));
+const FN=['יוסי','רונית','אבי','שירן','אלון','נועה','גיל','תמר','עמית','דנה'],LN=['מזרחי','פרידמן','אזולאי','שפירא','גולן','דהן','חדד','כץ','אדלר','סבג'];
+let clients=[
+{id:1,name:'דני כהן',phone:'050-1234567',type:'buy',budget:2000000,rooms:4,areas:['דניה','אחוזה'],park:1,mamad:1,active:1},
+{id:2,name:'מיכל לוי',phone:'052-7654321',type:'invest',budget:1000000,rooms:3,areas:['קריית חיים'],park:1,mamad:1,active:1},
+{id:3,name:'רון ביטון',phone:'054-5551212',type:'buy',budget:2300000,rooms:4,areas:['הדר','דניה'],park:1,mamad:0,active:1}]
+.concat(Array.from({length:57},(_,i)=>{const t=i%3?'buy':'invest';return{id:i+4,name:FN[i%10]+' '+LN[(i*3+1)%10],phone:'05'+(i%5)+'-'+(1000000+i*7919),type:t,budget:t==='buy'?1500000+(i%9)*150000:800000+(i%5)*100000,rooms:3+i%3,areas:[AREAS[i%6],AREAS[(i+2)%6]],park:i%4?1:0,mamad:i%3?1:0,active:i%7?1:0}}));
+const P=id=>props.find(p=>p.id==id),C=id=>clients.find(c=>c.id==id);
+let page='s1',prev='s1',cur={c:null,p:null},sel=new Set(),view={c:1,ps:[1]};
+
+function show(id){prev=page;page=id;
+  document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('on',s.id===id));
+  const t={s1:0,cp:0,s2:1,pp:1,s3:2}[id];
+  document.querySelectorAll('nav button').forEach((b,i)=>b.classList.toggle('on',i===t));
+  scrollTo(0,0);bar()}
+function go(t){show(['s1','s2','s3'][t]);if(t===2)renderView()}
+function back(){show(prev)}
+function toast(t){const e=$('#toast');e.textContent=t;e.style.display='block';clearTimeout(e.t);e.t=setTimeout(()=>e.style.display='none',2600)}
+
+function sc(c,p){
+  if(p.sold||(c.park&&!p.park)||(c.mamad&&!p.mamad)||p.price>c.budget+ST[c.type]||!c.areas.includes(p.area))return null;
+  const over=Math.max(0,p.price-c.budget);
+  return{over,score:Math.max(50,100-(over?8+Math.round(over/c.budget*100):0)-Math.round(Math.abs(p.rooms-c.rooms)*8))};
+}
+const musts=c=>c.park&&c.mamad?'חניה וממ״ד':c.park?'חניה':c.mamad?'ממ״ד':'';
+function bd(c,p,over){const m=musts(c),a=[];
+  if(m)a.push('<span class="b">✓ '+m+'</span>');
+  a.push(over?'<span class="b w">⚠️ חריגת תקציב '+Math.round(over/1000)+'K</span>':'<span class="b">✓ בתקציב</span>');
+  a.push(p.rooms==c.rooms?'<span class="b">✓ '+p.rooms+' חדרים</span>':'<span class="b n">ℹ️ '+p.rooms+' חדרים (מבוקש '+c.rooms+')</span>');
+  return a.join('')}
+
+function renderClients(){
+  const q=$('#q').value.trim(),l=clients.filter(c=>(c.name+c.phone+c.areas.join(' ')).includes(q));
+  $('#clientList').innerHTML=l.slice(0,10).map(c=>{const m=musts(c);
+    return `<div class="card pad" onclick="openC(${c.id})"><div class="row"><b>${esc(c.name)}</b><span class="sub">${esc(c.phone)}</span></div>
+    <div class="sub">${TY[c.type]} · עד ${fmt(c.budget)} · ${c.rooms} חדרים · ${esc(c.areas.join(', '))}</div>
+    <div class="badges">${m?'<span class="b w">חובה: '+m+'</span>':''}${c.active?'':'<span class="b n">לא פעיל</span>'}</div></div>`}).join('')
+    +`<div class="sub" style="text-align:center">מוצגים ${Math.min(10,l.length)} מתוך ${l.length} · הקלד כדי לצמצם</div>`;
+}
+function openC(id){cur.c=id;sel.clear();renderCP();show('cp')}
+function renderCP(){
+  const c=C(cur.c),m=musts(c);
+  const l=props.map(p=>{const r=sc(c,p);return r&&{p,...r}}).filter(Boolean).sort((a,b)=>b.score-a.score);
+  $('#cp').innerHTML=`<button class="bk" onclick="back()">→ חזרה</button>
+  <div class="row"><h1>${esc(c.name)}</h1><button onclick="openClient(${c.id})">✏️ עריכה</button></div>
+  <div class="sub">${esc(c.phone)} · ${TY[c.type]} · עד ${fmt(c.budget)} (גמישות עד ${ST[c.type]/1000}K) · ${c.rooms} חדרים</div>
+  <div class="sub">${esc(c.areas.join(', '))}${m?' · חובה: '+m:''}${c.active?'':' · לא פעיל'}</div>
+  <h2>נכסים מתאימים (${l.length})</h2><div class="sub">סמן כמה נכסים ושלח ללקוח קישור אחד</div>`+
+  (l.map(({p,over,score})=>`<div class="card"><div class="ph">📷 תמונה</div><div class="pad">
+    <label class="sel"><input type="checkbox" ${sel.has(p.id)?'checked':''} onchange="tog(${p.id},this.checked)"> בחר לשליחה</label>
+    <div class="row"><span class="price">${fmt(p.price)}</span><span class="score">התאמה ${score}%</span></div>
+    <div onclick="openP(${p.id})"><b>${esc(p.area)}</b> <span class="sub">${p.rooms} חדרים · ${p.sqm} מ״ר · קומה ${p.floor} ›</span></div>
+    <div class="badges">${bd(c,p,over)}</div>
+    <div class="btns"><button class="g" onclick="share('link',${c.id},[${p.id}])">🔗 שלח קישור אישי</button><button class="o" onclick="share('text',${c.id},[${p.id}])">💬 שלח טקסט ותמונות</button></div></div></div>`).join('')||'<div class="note">אין נכסים מתאימים כרגע.</div>');
+}
+function tog(id,on){on?sel.add(id):sel.delete(id);bar()}
+function bar(){const b=$('#bar');b.style.display=page==='cp'&&sel.size?'block':'none';
+  b.innerHTML=`<button class="g" style="width:100%" onclick="share('link',cur.c,[...sel])">🔗 שלח ${sel.size} נכסים בקישור אחד</button>`}
+
+function renderProps(){
+  const q=$('#pq').value.trim();
+  $('#propList').innerHTML=props.filter(p=>(p.area+' '+p.addr+' '+p.rooms+' חדרים '+p.price).includes(q)).map(p=>{
+    const f=[p.park?'חניה':'',p.mamad?'ממ״ד':'',p.elev?'מעלית':'',p.balc?'מרפסת':''].filter(Boolean).map(x=>'<span class="b n">'+x+'</span>').join('');
+    return `<div class="card pad" onclick="openP(${p.id})"><div class="row"><b>${esc(p.area)}</b><span class="price">${fmt(p.price)}</span></div>
+    <div class="sub">${p.rooms} חדרים · ${p.sqm} מ״ר · קומה ${p.floor}</div>
+    <div class="sub">🔒 ${esc(p.addr)} (מוסתרת מלקוחות)</div>${p.special?'<div class="sub">⭐ '+esc(p.special)+'</div>':''}
+    <div class="badges">${f}${p.sold?'<span class="b w">נמכר / לא פעיל</span>':''}</div></div>`}).join('');
+}
+function openP(id){cur.p=id;renderPP();show('pp')}
+function renderPP(){
+  const p=P(cur.p);
+  const l=clients.filter(c=>c.active).map(c=>{const r=sc(c,p);return r&&{c,...r}}).filter(Boolean).sort((a,b)=>b.score-a.score);
+  $('#pp').innerHTML=`<button class="bk" onclick="back()">→ חזרה</button>
+  <div class="row"><h1>${esc(p.area)} · ${fmt(p.price)}</h1><button onclick="openProp(${p.id})">✏️ עריכה</button></div>
+  <div class="ph" style="height:110px;border-radius:8px">📷 תמונות הנכס</div>
+  <div class="sub" style="margin-top:8px">${p.rooms} חדרים · ${p.sqm} מ״ר · קומה ${p.floor} · 🔒 ${esc(p.addr)}</div>
+  <h2>לקוחות מתאימים (${l.length})</h2><div class="sub">נכס חדש נכנס? כאן רואים למי לשלוח אותו</div>`+
+  (l.slice(0,8).map(({c,over,score})=>`<div class="card pad"><div class="row"><b onclick="openC(${c.id})">${esc(c.name)} ›</b><span class="score">התאמה ${score}%</span></div>
+    <div class="sub">${TY[c.type]} · עד ${fmt(c.budget)}</div><div class="badges">${bd(c,p,over)}</div>
+    <div class="btns"><button class="g" onclick="share('link',${c.id},[${p.id}])">🔗 קישור</button><button class="o" onclick="share('text',${c.id},[${p.id}])">💬 טקסט ותמונות</button></div></div>`).join('')||'<div class="note">אין לקוחות מתאימים כרגע.</div>')
+  +(l.length>8?'<div class="sub" style="text-align:center">מוצגים 8 הראשונים מתוך '+l.length+'</div>':'');
+}
+
+const one=p=>p.rooms+' חדרים ב'+p.area+', '+p.sqm+' מ״ר, קומה '+p.floor+' · '+fmt(p.price);
+const body=(c,ids)=>'היי '+c.name.split(' ')[0]+', '+(ids.length>1?'מצאתי לך '+ids.length+' נכסים שמתאימים:\n'+ids.map(i=>'• '+one(P(i))).join('\n'):'מצאתי לך נכס שמתאים:\n'+one(P(ids[0])));
+const link=(c,ids)=>'https://example.com/v/'+(c.id*7919+ids[0]*104729).toString(36);
+function share(kind,cid,ids){
+  const c=C(cid),t=body(c,ids),l=link(c,ids);let h='';
+  if(kind==='link'){
+    try{navigator.clipboard.writeText(t+'\n'+l)}catch(e){}
+    h=`<h2 style="margin:0">🔗 הקישור האישי הועתק</h2><div class="sub">דף אחד עם ${ids.length>1?ids.length+' נכסים':'הנכס'}, עם שם הלקוח</div>
+    <div class="bubble">${esc(t)}\n<span class="link">${l}</span></div>
+    <div class="btns"><button class="g" onclick="wa('link',${cid},[${ids}])">פתח בוואטסאפ</button><button onclick="closeSheet();openView(${cid},[${ids}])">👁️ מה הלקוח רואה</button></div>`;
+  }else{
+    h=`<h2 style="margin:0">💬 טקסט ותמונות</h2><div class="sub">בנייד נפתח תפריט השיתוף של הטלפון: בוחרים איש קשר ושולחים</div>
+    <div class="bubble"><div class="thumbs"><div class="ph">תמונה 1</div><div class="ph">תמונה 2</div><div class="ph">תמונה 3</div></div>${esc(t)}</div>
+    <div class="btns"><button class="g" onclick="wa('text',${cid},[${ids}])">פתח תפריט שיתוף</button><button onclick="closeSheet()">סגור</button></div>`;
+  }
+  $('#sheet').innerHTML=h;$('#sheetbg').classList.add('on');
+}
+function wa(kind,cid,ids){const c=C(cid),t=body(c,ids)+(kind==='link'?'\n'+link(c,ids):'');
+  if(kind==='text'&&navigator.share){navigator.share({text:t}).catch(()=>{});return}
+  window.open('https://wa.me/?text='+encodeURIComponent(t),'_blank')}
+function closeSheet(){$('#sheetbg').classList.remove('on')}
+
+function openView(cid,ids){view={c:cid,ps:ids};go(2)}
+function renderView(){
+  const c=C(view.c),ps=view.ps.map(P),f=esc(c.name.split(' ')[0]);
+  $('#view').innerHTML=`<div class="cvhead"><small>ליראז · תיווך נדל״ן</small><b>${ps.length>1?'הצעות נכסים אישיות ל':'הצעת נכס אישית ל'}${f}</b></div>`+
+  ps.map(p=>{
+    const am=[p.park?'חניה':'',p.mamad?'ממ״ד':'',p.elev?'מעלית':'',p.balc?'מרפסת':''].filter(Boolean).map(x=>'<span class="b">✓ '+x+'</span>').join('');
+    const t='היי, אני מעוניין בנכס ב'+p.area+' ('+fmt(p.price)+')';
+    return `<div style="background:#fff;margin-bottom:12px"><div class="car"><div class="ph">📷 תמונה 1 (החלק לצדדים)</div><div class="ph">📷 תמונה 2</div><div class="ph">📷 תמונה 3</div></div>
+    <div class="pad"><div class="price" style="font-size:24px">${fmt(p.price)}</div><div style="font-size:18px">${p.rooms} חדרים ב${esc(p.area)}</div>
+    <div class="sub">${p.sqm} מ״ר · קומה ${p.floor} · הכתובת תימסר בפגישה</div><div class="badges">${am}</div>
+    <a class="wabig" href="https://wa.me/972500000000?text=${encodeURIComponent(t)}" target="_blank" rel="noopener">👍 אני מעוניין</a></div></div>`}).join('');
+}
+
+const fi=(l,id,v,t='text',x='')=>`<label>${l}</label><input type="${t}" id="${id}" value="${esc(v)}" ${x}>`;
+const ck=(id,l,on)=>`<label><input type="checkbox" id="${id}" ${on?'checked':''}>${l}</label>`;
+const mh=t=>`<div class="mh"><h1>${t}</h1><button onclick="closeModal()" aria-label="סגור">✕</button></div><div class="note">השדות לדוגמה, נסגור יחד מה באמת צריך</div>`;
+function openModal(h){$('#modal').innerHTML=h;$('#modal').classList.add('on');$('#modal').scrollTop=0}
+function closeModal(){$('#modal').classList.remove('on')}
+function refresh(){renderClients();renderProps();if(page==='cp')renderCP();if(page==='pp')renderPP();bar()}
+const v=id=>$('#'+id).value,k=id=>+$('#'+id).checked;
+
+function openProp(id){const p=id?P(id):{};
+  openModal(mh(id?'עריכת נכס':'נכס חדש')+fi('אזור (שכונה)','pa',p.area,'text','placeholder="למשל: דניה"')+fi('כתובת (מוסתרת מהלקוחות)','pad',p.addr)+
+  fi('מחיר (₪)','ppr',p.price,'number','inputmode="numeric"')+fi('חדרים','pr',p.rooms,'number','inputmode="decimal" step="0.5"')+
+  fi('מ״ר','ps',p.sqm,'number','inputmode="numeric"')+fi('קומה','pf',p.floor,'number','inputmode="numeric"')+
+  '<div class="chk">'+ck('pk','חניה',p.park)+ck('pm','ממ״ד',p.mamad)+ck('pe','מעלית',p.elev)+ck('pb','מרפסת',p.balc)+'</div>'+
+  fi('שדה מיוחד (לנכסים חריגים)','psp',p.special)+'<div class="chk">'+ck('psold','נמכר / לא פעיל',p.sold)+'</div>'+
+  `<button style="width:100%;margin-top:8px" onclick="toast('בנייד נפתחת המצלמה או הגלריה')">📷 הוסף תמונות</button>
+  <button class="p" style="width:100%;margin-top:12px" onclick="saveProp(${id||0})">שמור נכס</button>`)}
+function saveProp(id){
+  const o={area:v('pa').trim(),addr:v('pad')||'—',price:+v('ppr'),rooms:+v('pr')||0,sqm:+v('ps')||0,floor:+v('pf')||0,park:k('pk'),mamad:k('pm'),elev:k('pe'),balc:k('pb'),special:v('psp'),sold:k('psold')};
+  if(!o.area||!o.price){toast('נא למלא אזור ומחיר');return}
+  id?Object.assign(P(id),o):props.unshift({id:Date.now(),...o});
+  closeModal();refresh();toast('נשמר (בהדגמה, עד רענון הדף)')}
+function openClient(id){const c=id?C(id):{active:1};
+  const op=(x,t)=>`<option value="${x}" ${c.type===x?'selected':''}>${t}</option>`;
+  openModal(mh(id?'עריכת לקוח':'לקוח חדש')+fi('שם','cn',c.name)+fi('טלפון','cph',c.phone,'tel')+
+  '<label>סוג עסקה</label><select id="ct">'+op('buy','קנייה')+op('invest','השקעה')+'</select><div class="sub">קובע כמה אפשר לחרוג מהתקציב (בדוגמה: השקעה עד 300K, קנייה עד 500K)</div>'+
+  fi('תקציב מקסימלי (₪)','cb',c.budget,'number','inputmode="numeric"')+fi('חדרים','cr',c.rooms,'number','inputmode="decimal" step="0.5"')+
+  fi('שכונות מבוקשות (מופרדות בפסיק)','ca',(c.areas||[]).join(', '))+
+  '<div class="sub" style="margin-top:12px">תנאי חובה:</div><div class="chk">'+ck('ck','חניה',c.park)+ck('cm','ממ״ד',c.mamad)+'</div><div class="chk">'+ck('cact','לקוח פעיל',c.active)+'</div>'+
+  `<button class="p" style="width:100%;margin-top:12px" onclick="saveClient(${id||0})">שמור לקוח</button>`)}
+function saveClient(id){
+  const o={name:v('cn').trim(),phone:v('cph')||'—',type:v('ct'),budget:+v('cb'),rooms:+v('cr')||0,areas:v('ca').split(',').map(x=>x.trim()).filter(Boolean),park:k('ck'),mamad:k('cm'),active:k('cact')};
+  if(!o.name||!o.budget){toast('נא למלא שם ותקציב');return}
+  id?Object.assign(C(id),o):clients.unshift({id:Date.now(),...o});
+  closeModal();refresh();toast('נשמר (בהדגמה, עד רענון הדף)')}
+
+renderClients();renderProps();
+</script>
+</body>
+</html>
